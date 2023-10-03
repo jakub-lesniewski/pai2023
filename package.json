@@ -12,6 +12,5 @@
   "description": "",
   "version": "1.0.0",
   "main": "server.js",
-  "devDependencies": {},
   "homepage": "https://gitlab.com/mariusz.jarocki/pai2023zima"
 }
