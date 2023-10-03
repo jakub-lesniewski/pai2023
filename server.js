@@ -16,8 +16,15 @@ app.use(bodyParser.json())
 
 app.use(express.static(config.frontend))
 
-app.use('/test', (req, res) => {
-    res.json({ test: true })
+let test = 1
+
+app.get('/test', (req, res) => {
+    res.json({ test })
+})
+
+app.post('/test', (req, res) => {
+    test = req.body.test
+    res.json({ test })
 })
 
 app.listen(config.port, () => {
