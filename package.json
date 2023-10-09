@@ -8,6 +8,7 @@
   "scripts": {
     "start": "node server.js"
   },
+  "postinstall": "cd frontend && npm install",
   "name": "pai2023zima",
   "description": "",
   "version": "1.0.0",

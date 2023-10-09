@@ -1,7 +1,8 @@
 <template>
   <h1>App</h1>
+  <br/>
   <TestComponent/>
-  <hr/>
+  <br/><hr/>
   <div class="footer">Footer</div>
 </template>
 
@@ -18,7 +19,8 @@ export default {
 
 <style>
 #app {
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  margin: 10px 30px;
 }
 .footer {
   font-size: small;
