@@ -1,18 +1,16 @@
 <template>
-  <h1>App</h1>
-  <br/>
-  <TestComponent/>
+  <PersonEditor/>
   <br/><hr/>
   <div class="footer">Footer</div>
 </template>
 
 <script>
-import TestComponent from './components/TestComponent.vue'
+import PersonEditor from './components/PersonEditor.vue'
 
 export default {
   name: 'App',
   components: {
-    TestComponent
+    PersonEditor
   }
 }
 </script>
