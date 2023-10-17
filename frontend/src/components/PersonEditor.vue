@@ -17,6 +17,7 @@
 <script>
 export default {
   name: 'PersonEditor',
+  emits: [ 'dataModified' ],
   methods: {
     send() {
       fetch('/person', {
@@ -26,7 +27,7 @@ export default {
         .then((res) => {
           res.json()
             .then((data) => {
-              alert(JSON.stringify(data))
+              this.$emit('dataModified', data)
             })
             .catch((err) => alert(err.message))
         })

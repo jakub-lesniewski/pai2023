@@ -1,16 +1,30 @@
 <template>
-  <PersonEditor/>
+  <div class="twoinrow">
+    <PersonEditor @dataModified="onDataModified"/>
+    <PersonsLister ref="personsListerRef"/>
+  </div>
   <br/><hr/>
   <div class="footer">Footer</div>
 </template>
 
 <script>
 import PersonEditor from './components/PersonEditor.vue'
+import PersonsLister from './components/PersonsLister.vue'
 
 export default {
   name: 'App',
   components: {
-    PersonEditor
+    PersonEditor, PersonsLister
+  },
+  methods: {
+    onDataModified() {
+      this.$refs.personsListerRef.retrieve()
+    }
+  },
+  data() {
+    return {
+      dataModified: {}
+    }
   }
 }
 </script>
@@ -23,5 +37,9 @@ export default {
 .footer {
   font-size: small;
   text-align: center;
+}
+.twoinrow {
+  gap: 10px;
+  display: flex;
 }
 </style>
