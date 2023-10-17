@@ -30,7 +30,7 @@
 
 <script>
 export default {
-  name: 'PersonEditor',
+  name: 'PersonsLister',
   methods: {
     retrieve() {
       fetch('/person', {

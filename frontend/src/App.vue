@@ -20,11 +20,6 @@ export default {
     onDataModified() {
       this.$refs.personsListerRef.retrieve()
     }
-  },
-  data() {
-    return {
-      dataModified: {}
-    }
   }
 }
 </script>
