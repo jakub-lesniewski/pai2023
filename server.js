@@ -6,8 +6,9 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
 
+let config = {}
 try {
-    let config = JSON.parse(fs.readFileSync('config.json'))
+    config = JSON.parse(fs.readFileSync('config.json'))
 } catch(err) {
     console.error('Configuration broken:', err.message)
     process.exit(0)
@@ -34,11 +35,23 @@ const Person = new mongoose.model('Person', new mongoose.Schema({
 }))
 
 app.get('/person', (req, res) => {
-    Person.find().then((data) => {
-        res.json(data)
-    }).catch(err => {
-        res.status(400).json({ error: err.message })
-    })
+    if(!req.query._id) {
+        Person.find().then((data) => {
+            res.json(data)
+        }).catch(err => {
+            res.status(400).json({ error: err.message })
+        })
+    } else {
+        Person.findOne({ _id: req.query._id }).then((data) => {
+            if(data) {
+                res.json(data)
+            } else {
+                res.status(404).json({ error: 'No such object' })
+            }
+        }).catch(err => {
+            res.status(400).json({ error: err.message })
+        })
+    }
 })
 
 app.post('/person', (req, res) => {
