@@ -1,11 +1,16 @@
+const fs = require('fs')
+
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
+const mongoose = require('mongoose')
 
-const config = {
-    port: 8000,
-    frontend: './frontend/dist'
+try {
+    let config = JSON.parse(fs.readFileSync('config.json'))
+} catch(err) {
+    console.error('Configuration broken:', err.message)
+    process.exit(0)
 }
 
 const app = express()
@@ -20,18 +25,36 @@ app.use((err, req, res, next) => {
 
 app.use(express.static(config.frontend))
 
-let persons = []
+const Person = new mongoose.model('Person', new mongoose.Schema({
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    birthDate: { type: Date, required: true, transform: v => v.toISOString().slice(0, 10) }
+}, {
+    versionKey: false
+}))
 
 app.get('/person', (req, res) => {
-    res.json(persons)
+    Person.find().then((data) => {
+        res.json(data)
+    }).catch(err => {
+        res.status(400).json({ error: err.message })
+    })
 })
 
 app.post('/person', (req, res) => {
     req.body.birthDate = new Date(req.body.birthDate)
-    persons.push(req.body)
-    res.json(req.body)
+    let newPerson = Person(req.body)
+    newPerson.save().then((saved) => {
+        res.json(saved)
+    }).catch(err => {
+        res.status(400).json({ error: err.message })
+    })
 })
 
-app.listen(config.port, () => {
-    console.log('Backend listening on port', config.port)
+mongoose.connect(config.dbUrl).then(() => {
+    app.listen(config.port, () => {
+        console.log('Backend listening on port', config.port)
+    })
+}).catch((err) => {
+    console.error('Connection to database failed', err.message)
 })
