@@ -55,10 +55,47 @@ app.get('/person', (req, res) => {
 })
 
 app.post('/person', (req, res) => {
-    req.body.birthDate = new Date(req.body.birthDate)
+    if(req.body._id || req.query._id) {
+        res.status(400).json({ error: '_id is not allowed during the operation' })
+        return
+    }
     let newPerson = Person(req.body)
     newPerson.save().then((saved) => {
         res.json(saved)
+    }).catch(err => {
+        res.status(400).json({ error: err.message })
+    })
+})
+
+app.put('/person', (req, res) => {
+    if(!req.query._id) {
+        res.status(400).json({ error: '_id is obligatory during the update operation' })
+        return
+    }
+    Person.findOneAndUpdate({ _id: req.query._id }, req.body, { new: true })
+        .then(updated => {
+            if(updated) {
+                res.json(updated)
+            } else {
+                res.status(404).json({ error: 'No such object' })
+            }
+        })
+        .catch(err => {
+            res.status(400).json({ error: err.message })
+        })
+})
+
+app.delete('/person', (req, res) => {
+    if(!req.query._id) {
+        res.status(400).json({ error: '_id is obligatory during the delete operation' })
+        return
+    }
+    Person.findOneAndDelete({ _id: req.query._id }).then((deleted) => {
+        if(deleted) {
+            res.json(deleted)
+        } else {
+            res.status(404).json({ error: 'No such object' })
+        }
     }).catch(err => {
         res.status(400).json({ error: err.message })
     })

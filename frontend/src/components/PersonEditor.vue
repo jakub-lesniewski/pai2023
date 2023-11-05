@@ -32,6 +32,9 @@ export default {
             .catch((err) => alert(err.message))
         })
         .catch((err) => alert(err.message))
+    },
+    fill(data) {
+      console.log(data)
     }
   },
   data() {
@@ -44,7 +47,7 @@ export default {
       person: {
         firstName: '',
         lastName: '',
-        birthDate: new Date().toJSON().slice(0, 10)
+        birthDate: new Date().toISOString().slice(0, 10)
       }     
     }
   } 

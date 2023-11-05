@@ -1,7 +1,7 @@
 <template>
   <div class="twoinrow">
-    <PersonEditor @dataModified="onDataModified"/>
-    <PersonsLister ref="personsListerRef"/>
+    <PersonEditor @dataModified="onDataModified" ref="personEditorRef"/>
+    <PersonsLister @dataClicked="onDataClicked" ref="personsListerRef"/>
   </div>
   <br/><hr/>
   <div class="footer">Footer</div>
@@ -19,6 +19,9 @@ export default {
   methods: {
     onDataModified() {
       this.$refs.personsListerRef.retrieve()
+    },
+    onDataClicked(data) {
+      this.$refs.personEditorRef.fill(data)
     }
   }
 }
