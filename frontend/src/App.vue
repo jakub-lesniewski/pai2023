@@ -1,7 +1,8 @@
 <template>
-  <div class="twoinrow">
+  <div class="allinrow">
     <PersonEditor @dataModified="onDataModified" ref="personEditorRef"/>
     <PersonsLister @dataClicked="onDataClicked" ref="personsListerRef"/>
+    <PersonChooser/>
   </div>
   <br/><hr/>
   <div class="footer">Footer</div>
@@ -10,12 +11,13 @@
 <script>
 import PersonEditor from './components/PersonEditor.vue'
 import PersonsLister from './components/PersonsLister.vue'
+import PersonChooser from './components/PersonChooser.vue'
 
 export default {
   name: 'App',
   components: {
-    PersonEditor, PersonsLister
-  },
+    PersonEditor, PersonsLister, PersonChooser
+},
   methods: {
     onDataModified() {
       this.$refs.personsListerRef.retrieve()
@@ -36,7 +38,7 @@ export default {
   font-size: small;
   text-align: center;
 }
-.twoinrow {
+.allinrow {
   gap: 10px;
   display: flex;
 }
