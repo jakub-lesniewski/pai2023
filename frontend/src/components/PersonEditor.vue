@@ -9,7 +9,9 @@
       </v-form>
     </v-card-text>
     <v-card-actions class="actions">
-      <v-btn variant="elevated" color="success" @click="send" :disabled="!isPersonValid">Send</v-btn>
+      <v-btn variant="elevated" color="success" @click="add" :disabled="!isPersonValid">Add</v-btn>
+      <v-btn variant="elevated" color="success" @click="modify" :disabled="!isPersonValid || !selected_id">Modify</v-btn>
+      <v-btn variant="elevated" color="error" @click="remove" :disabled="!isPersonValid || !selected_id">Delete</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -19,7 +21,7 @@ export default {
   name: 'PersonEditor',
   emits: [ 'dataModified' ],
   methods: {
-    send() {
+    add() {
       fetch('/person', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -33,8 +35,35 @@ export default {
         })
         .catch((err) => alert(err.message))
     },
+    modify() {
+      fetch('/person?_id=' + this.selected_id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(this.person) })
+        .then((res) => {
+          res.json()
+            .then((data) => {
+              this.$emit('dataModified', data)
+            })
+            .catch((err) => alert(err.message))
+        })
+        .catch((err) => alert(err.message))
+    },
+    remove() {
+      fetch('/person?_id=' + this.selected_id, { method: 'DELETE' })
+        .then((res) => {
+          res.json()
+            .then((data) => {
+              this.$emit('dataModified', data)
+            })
+            .catch((err) => alert(err.message))
+        })
+        .catch((err) => alert(err.message))
+    },
     fill(data) {
-      console.log(data)
+      this.selected_id = data._id
+      delete data._id
+      Object.assign(this.person, data)
     }
   },
   data() {
@@ -48,7 +77,8 @@ export default {
         firstName: '',
         lastName: '',
         birthDate: new Date().toISOString().slice(0, 10)
-      }     
+      },
+      selected_id: null     
     }
   } 
 }
