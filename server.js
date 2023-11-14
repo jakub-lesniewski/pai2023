@@ -37,23 +37,36 @@ const Person = new mongoose.model('Person', new mongoose.Schema({
 }))
 
 app.get('/person', (req, res) => {
-    if(!req.query._id) {
-        Person.find().then((data) => {
-            res.json(data)
-        }).catch(err => {
+    let aggregation = []
+    let search = req.query.search || ''
+    aggregation.push({ $match: { $or: [
+        { firstName: { $regex: new RegExp(search, 'i') }},
+        { lastName: { $regex: new RegExp(search, 'i') }}
+    ]}})
+    aggregation.push({ $sort: { lastName: 1, firstName: 1 }})
+    if(req.query._id) {
+        try {
+            aggregation.push({ $match: { _id: new mongoose.Types.ObjectId(req.query._id) }})
+        } catch(err) {
             res.status(400).json({ error: err.message })
-        })
-    } else {
-        Person.findOne({ _id: req.query._id }).then((data) => {
-            if(data) {
-                res.json(data)
+            return    
+        }
+    }
+    Person.aggregate(aggregation)
+    .then(data => {
+        if(req.query._id) {
+            if(data.length > 0) {
+                res.json(data[0])
             } else {
                 res.status(404).json({ error: 'No such object' })
             }
-        }).catch(err => {
-            res.status(400).json({ error: err.message })
-        })
-    }
+        } else {
+            res.json(data)
+        }
+    })
+    .catch(err => {
+        res.status(400).json({ error: err.message })
+    })
 })
 
 app.post('/person', (req, res) => {

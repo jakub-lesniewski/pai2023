@@ -2,6 +2,9 @@
   <div>
     <v-card>
       <v-card-title>Persons</v-card-title>
+      <v-card-subtitle>
+        <v-text-field v-model="search" @input="retrieve" variant="solo" label="Search"></v-text-field>
+      </v-card-subtitle>
       <v-card-text>
         <v-table density="compact" hover>
           <thead>
@@ -51,7 +54,7 @@ export default {
     retrieve() {
       this.id = null
       this.editor = false
-      fetch('/person', {
+      fetch('/person?search=' + this.search, {
         method: 'GET' })
         .then((res) => {
           res.json()
@@ -79,7 +82,8 @@ export default {
     return {
       editor: false,
       persons: [],
-      id: null
+      id: null,
+      search: ''
     }
   },
   mounted() {
