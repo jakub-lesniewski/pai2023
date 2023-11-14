@@ -29,8 +29,10 @@ app.use(express.static(config.frontend))
 const Person = new mongoose.model('Person', new mongoose.Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    birthDate: { type: Date, required: true, transform: v => v.toISOString().slice(0, 10) }
+    birthDate: { type: Date, required: true, transform: v => v.toISOString().slice(0, 10) },
+    education: { type: Number, required: true, enum: [ 0, 1, 2 ], default: 0 }
 }, {
+    additionalProperties: false,
     versionKey: false
 }))
 
@@ -72,7 +74,7 @@ app.put('/person', (req, res) => {
         res.status(400).json({ error: '_id is obligatory during the update operation' })
         return
     }
-    Person.findOneAndUpdate({ _id: req.query._id }, req.body, { new: true })
+    Person.findOneAndUpdate({ _id: req.query._id }, req.body, { new: true, runValidators: true })
         .then(updated => {
             if(updated) {
                 res.json(updated)

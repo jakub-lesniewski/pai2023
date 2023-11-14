@@ -1,30 +1,16 @@
 <template>
-  <div class="allinrow">
-    <PersonEditor @dataModified="onDataModified" ref="personEditorRef"/>
-    <PersonsLister @dataClicked="onDataClicked" ref="personsListerRef"/>
-    <PersonChooser/>
+  <div>
+    <PersonsLister/>
   </div>
-  <br/><hr/>
-  <div class="footer">Footer</div>
 </template>
 
 <script>
-import PersonEditor from './components/PersonEditor.vue'
 import PersonsLister from './components/PersonsLister.vue'
-import PersonChooser from './components/PersonChooser.vue'
 
 export default {
   name: 'App',
   components: {
-    PersonEditor, PersonsLister, PersonChooser
-},
-  methods: {
-    onDataModified() {
-      this.$refs.personsListerRef.retrieve()
-    },
-    onDataClicked(data) {
-      this.$refs.personEditorRef.fill(data)
-    }
+    PersonsLister
   }
 }
 </script>
@@ -33,13 +19,5 @@ export default {
 #app {
   font-family: Roboto, Helvetica, Arial, sans-serif;
   margin: 10px 30px;
-}
-.footer {
-  font-size: small;
-  text-align: center;
-}
-.allinrow {
-  gap: 10px;
-  display: flex;
 }
 </style>
