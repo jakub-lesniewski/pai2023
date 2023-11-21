@@ -3,7 +3,19 @@
     <v-card>
       <v-card-title>Persons</v-card-title>
       <v-card-subtitle>
-        <v-text-field v-model="search" @input="retrieve" variant="solo" label="Search"></v-text-field>
+        <v-row>
+          <v-col>
+            <v-text-field v-model="search" @input="retrieve" variant="solo" label="Search"></v-text-field>
+          </v-col>
+          <v-col cols="3">
+            <v-select v-model="education" label="Education" multiple chips @update:modelValue="retrieve"
+              :items="[ { value: 0, title: 'primary' }, { value: 1, title: 'secondary' }, { value: 2, title: 'high' } ]"
+            ></v-select>
+          </v-col>
+          <v-col cols="2">
+            <v-slider label="Limit" v-model="limit" min="1" max="100" @update:modelValue="retrieve"></v-slider>
+          </v-col>
+        </v-row>
       </v-card-subtitle>
       <v-card-text>
         <v-table density="compact" hover>
@@ -54,7 +66,7 @@ export default {
     retrieve() {
       this.id = null
       this.editor = false
-      fetch('/person?search=' + this.search, {
+      fetch('/person?search=' + this.search + '&education=' + JSON.stringify(this.education) + '&limit=' + this.limit, {
         method: 'GET' })
         .then((res) => {
           res.json()
@@ -83,7 +95,9 @@ export default {
       editor: false,
       persons: [],
       id: null,
-      search: ''
+      limit: 10,
+      search: '',
+      education: [ 0, 1, 2 ]      
     }
   },
   mounted() {

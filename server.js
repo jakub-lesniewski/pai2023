@@ -38,7 +38,17 @@ const Person = new mongoose.model('Person', new mongoose.Schema({
 
 app.get('/person', (req, res) => {
     let aggregation = []
+    let limit = parseInt(req.query.limit) || 10
     let search = req.query.search || ''
+    let education = []
+    try {
+        education = JSON.parse(req.query.education)
+        if(!Array.isArray(education)) throw new Exception('education should be array of integers')
+    } catch(err) {
+        res.status(400).json({ error: err.message })
+        return
+    }
+    aggregation.push({ $match: { education: { $in: education } } } )
     aggregation.push({ $match: { $or: [
         { firstName: { $regex: new RegExp(search, 'i') }},
         { lastName: { $regex: new RegExp(search, 'i') }}
@@ -51,6 +61,8 @@ app.get('/person', (req, res) => {
             res.status(400).json({ error: err.message })
             return    
         }
+    } else {
+        aggregation.push({ $limit: limit })
     }
     Person.aggregate(aggregation)
     .then(data => {
