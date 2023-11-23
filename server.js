@@ -55,7 +55,12 @@ app.post('/person', person.post)
 app.put('/person', person.put)
 app.delete('/delete', person.delete)
 
-mongoose.connect(config.dbUrl).then(() => {
+mongoose.connect(config.dbUrl).then(connection => {
+    console.log('Database connected')
+    
+    // initialization of the models
+    person.init(connection)
+
     app.listen(config.port, () => {
         console.log('Backend listening on port', config.port)
     })
