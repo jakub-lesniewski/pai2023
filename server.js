@@ -53,7 +53,7 @@ app.delete('/auth', auth.logout)
 app.get('/person', person.get)
 app.post('/person', person.post)
 app.put('/person', person.put)
-app.delete('/delete', person.delete)
+app.delete('/person', person.delete)
 
 mongoose.connect(config.dbUrl).then(connection => {
     console.log('Database connected')

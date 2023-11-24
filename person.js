@@ -48,8 +48,13 @@ module.exports = {
                 let education = JSON.parse(req.query.education)
                 if(Array.isArray(education)) {
                     aggregation.push({ $match: { education: { $in: education } } })    
+                } else {
+                    throw new Error('education should be array')
                 }
-            } catch(err) {}
+            } catch(err) {
+                res.status(408).json({ error: err.message })
+                return
+            }
             aggregation.push({ $skip: parseInt(req.query.skip) || 0 })
             aggregation.push({ $limit: parseInt(req.query.limit) || 10 })
             model.aggregate(aggregation)
@@ -63,8 +68,8 @@ module.exports = {
     },
 
     post: (req, res) => {
-        const model = new model(req.body)
-        model.save()
+        const person = new model(req.body)
+        person.save()
         .then(data => {
             res.json(data)
         })
@@ -90,7 +95,7 @@ module.exports = {
 
     delete: (req, res) => {
         const _id = req.query._id
-        model.findOneAndDelete({ _id }).then((deleted) => {
+        model.findOneAndDelete({ _id }).then(deleted => {
             if(deleted) {
                 res.json(deleted)
             } else {

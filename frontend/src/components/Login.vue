@@ -48,7 +48,7 @@
       return {
         valid: false,
         rules: {
-            required: value => !!value || 'empty value is not allowed'
+          required: value => !!value || 'empty value is not allowed'
         },
         creds: {},
       }

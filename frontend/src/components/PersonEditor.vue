@@ -35,51 +35,44 @@ export default {
   name: 'PersonEditor',
   props: [ 'id' ],
   components: { ConfirmationDialog },
-  emits: [ 'cancel', 'dataChanged' ],
+  emits: [ 'cancel', 'dataChanged', 'dataAccessFailed' ],
   methods: {
     add() {
       fetch('/person', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(this.person) })
-        .then((res) => {
-          res.json()
-            .then(() => {
-              this.$emit('dataChanged')
-            })
-            .catch((err) => console.error(err.message))
+        .then(res => res.json())
+        .then(data => {
+          if(data.error) throw new Error(data.error)
+          this.$emit('dataChanged')
         })
-        .catch((err) => console.error(err.message))
+        .catch(err => this.$emit('dataAccessFailed', err.message))
     },
     modify() {
       fetch('/person?_id=' + this.id, {
-          method: 'PUT',
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(this.person) })
-        .then((res) => {
-          res.json()
-            .then(() => {
-              this.$emit('dataChanged')
-            })
-            .catch(err => console.error(err.message))
+        .then(res => res.json())
+        .then(data => {
+          if(data.error) throw new Error(data.error)
+          this.$emit('dataChanged')
         })
-        .catch(err => console.error(err.message))
+        .catch(err => this.$emit('dataAccessFailed', err.message))
     },
     remove() {
       this.confirmation = true
     },
     removeReal() {
       this.confirmation = false
-      fetch('/person?_id=' + this.id, {
-        method: 'DELETE' })
-        .then((res) => {
-          res.json()
-            .then(() => {
-              this.$emit('dataChanged')
-            })
-            .catch((err) => console.error(err.message))
-        })
-        .catch((err) => console.error(err.message))
+      fetch('/person?_id=' + this.id, { method: 'DELETE' })
+      .then(res => res.json())
+      .then(data => {
+        if(data.error) throw new Error(data.error)
+        this.$emit('dataChanged')
+      })
+      .catch(err => this.$emit('dataAccessFailed', err.message))
     },
     cancel() {
       this.$emit('cancel')
@@ -100,14 +93,12 @@ export default {
   mounted() {
     if(this.id) {
       fetch('/person?_id=' + this.id, { method: 'GET' })
-      .then((res) => {
-        res.json()
-        .then(data => {
-          Object.assign(this.person, data)
-        })
-        .catch((err) => console.error(err.message))
+      .then(res => res.json())
+      .then(data => {
+        if(data.error) throw new Error(data.error)
+        Object.assign(this.person, data)
       })
-      .catch((err) => console.error(err.message))
+      .catch(err => this.$emit('dataAccessFailed', err.message))
     } else {
       this.person = {}
     }

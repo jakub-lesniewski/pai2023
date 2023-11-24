@@ -39,8 +39,9 @@
       <ConfirmationDialog :question="'Are you sure to logout, ' + user.username + ' ?'" @ok="onLogout" @cancel="logoutConfirmation = false"/>
     </v-dialog>
 
+    <v-snackbar v-model="generalProblem" color="error" timeout="3000">{{ generalProblemMsg }}</v-snackbar>
     <v-snackbar v-model="loginSuccess" color="success" timeout="3000">Welcome on board, {{ user.username }}</v-snackbar>
-    <v-snackbar v-model="loginFailed" color="error" timeout="3000">Login failed</v-snackbar>
+    <v-snackbar v-model="loginFailed" color="warning" timeout="3000">Login failed</v-snackbar>
 
   </v-app>
 </template>
@@ -61,12 +62,12 @@ export default {
     onLogout() {
       this.logoutConfirmation = false
       fetch('/auth', { method: 'DELETE' })
-      .then(res => {
-        res.json()
-        .then(body => this.user = body)
-        .catch(err => console.error(err.message))
+      .then(res => res.json())
+      .then(() => this.user = {})
+      .catch(err => {
+        this.generalProblemMsg = err.message
+        this.generalProblem = true
       })
-      .catch(err => console.error(err.message))
     }
   },
   data() {
@@ -79,17 +80,22 @@ export default {
       loginFailed: false,
       loginSuccess: false,
       logoutConfirmation: false,
+      generalProblem: false,
+      generalProblemMsg: '',
       user: {}
     }
   },
   mounted() {
     fetch('/auth', { method: 'GET' })
-    .then(res => {
-      res.json()
-      .then(body => this.user = body)
-      .catch(err => console.error(err.message))
+    .then(res => res.json())
+    .then(body => {
+      if(body.error) throw new Error(body.error)
+      this.user = body
     })
-    .catch(err => console.error(err.message))
+    .catch(err => {
+      this.generalProblemMsg = err.message
+      this.generalProblem = true
+    })
   }
 }
 </script>

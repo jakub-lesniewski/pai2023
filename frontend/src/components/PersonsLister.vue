@@ -1,5 +1,4 @@
 <template>
-  <div>
     <v-card>
       <v-card-title>Persons</v-card-title>
       <v-card-subtitle>
@@ -50,10 +49,13 @@
         <v-btn variant="elevated" color="success" @click="add">Add</v-btn>
       </v-card-actions>
     </v-card>
+
     <v-dialog v-model="editor" width="50%">
-      <PersonEditor :id="id" @dataChanged="retrieve" @cancel="cancel"/>
+      <PersonEditor :id="id" @dataChanged="retrieve" @cancel="cancel" @dataAccessFailed="onDataAccessFailed"/>
     </v-dialog>
-  </div>
+
+    <v-snackbar v-model="dataAccessError" color="error" timeout="3000">{{ dataAccessErrorMsg }}</v-snackbar>
+
 </template>
 
 <script>
@@ -66,16 +68,13 @@ export default {
     retrieve() {
       this.id = null
       this.editor = false
-      fetch('/person?search=' + this.search + '&education=' + JSON.stringify(this.education) + '&limit=' + this.limit, {
-        method: 'GET' })
-        .then((res) => {
-          res.json()
-            .then((data) => {
-              this.persons = data
-            })
-            .catch(err => console.error(err.message))
-        })
-        .catch(err => console.error(err.message))
+      fetch('/person?search=' + this.search + '&education=' + JSON.stringify(this.education) + '&limit=' + this.limit, { method: 'GET' })
+      .then(res => res.json())
+      .then(data => { 
+        if(data.error) throw new Error(data.error)
+        this.persons = data 
+      })
+      .catch(err => this.onDataAccessFailed(err.message))
     },
     add() {
       this.id = null
@@ -88,6 +87,10 @@ export default {
     cancel() {
       this.id = null
       this.editor = false
+    },
+    onDataAccessFailed(data) {
+      this.dataAccessErrorMsg = data
+      this.dataAccessError = true
     }
   },
   data() {
@@ -97,7 +100,9 @@ export default {
       id: null,
       limit: 10,
       search: '',
-      education: [ 0, 1, 2 ]      
+      education: [ 0, 1, 2 ],
+      dataAccessError: false,
+      dataAccessErrorMsg: ''
     }
   },
   mounted() {
