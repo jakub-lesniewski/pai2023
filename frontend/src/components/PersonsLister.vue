@@ -2,17 +2,22 @@
     <v-card>
       <v-card-title>Persons</v-card-title>
       <v-card-subtitle>
+        Filtering
         <v-row>
           <v-col>
-            <v-text-field v-model="search" @input="retrieve" variant="solo" label="Search"></v-text-field>
+            <v-text-field v-model="search" @input="retrieve" variant="solo" label="Match name"></v-text-field>
           </v-col>
-          <v-col cols="3">
+          <v-col cols="4">
             <v-select v-model="education" label="Education" multiple chips @update:modelValue="retrieve"
               :items="[ { value: 0, title: 'primary' }, { value: 1, title: 'secondary' }, { value: 2, title: 'high' } ]"
             ></v-select>
           </v-col>
           <v-col cols="2">
-            <v-slider label="Limit" v-model="limit" min="1" max="100" @update:modelValue="retrieve"></v-slider>
+            <div>Limit</div>
+            <v-slider density="compact" v-model="limit" min="5" max="100" step="5" thumb-label @update:modelValue="retrieve"></v-slider>
+          </v-col>
+          <v-col cols="1">
+            <v-btn variant="elevated" color="success" @click="add">Add</v-btn>
           </v-col>
         </v-row>
       </v-card-subtitle>
@@ -44,10 +49,6 @@
           </tbody>
         </v-table>
       </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn variant="elevated" color="success" @click="add">Add</v-btn>
-      </v-card-actions>
     </v-card>
 
     <v-dialog v-model="editor" width="50%">
