@@ -1,6 +1,20 @@
 <template>
-  <v-app>
-    
+  <v-snackbar v-model="preparation" vertical color="white" location="center" timeout="-1">
+    <div>
+      Connecting to backend...
+    </div>
+    <v-progress-linear v-if="preparation" size="50" color="primary" indeterminate></v-progress-linear>
+  </v-snackbar>
+
+  <v-snackbar v-model="generalProblem" color="error" location="center" multi-line timeout="-1">
+    <h2>
+      Application error
+    </h2>
+    <div>{{ generalProblemMsg }}</div>
+  </v-snackbar>
+
+  <v-app v-if="!preparation && !generalProblem">
+
     <v-navigation-drawer expand-on-hover rail permanent>
       
       <v-list density="compact" nav>
@@ -13,7 +27,7 @@
 
       <v-list v-if="user.username">
         <v-list-item
-          :prepend-avatar="require('./assets/logo.png')"
+          :prepend-avatar="require('./assets/user.png')"
           :title="user.username"
           :subtitle="user.email"
         >
@@ -36,10 +50,9 @@
     </v-dialog>
 
     <v-dialog v-model="logoutConfirmation" width="auto">
-      <ConfirmationDialog :question="'Are you sure to logout, ' + user.username + ' ?'" @ok="onLogout" @cancel="logoutConfirmation = false"/>
+      <ConfirmationDialog :question="'Are you sure to logout?'" @ok="onLogout" @cancel="logoutConfirmation = false"/>
     </v-dialog>
 
-    <v-snackbar v-model="generalProblem" color="error" timeout="3000">{{ generalProblemMsg }}</v-snackbar>
     <v-snackbar v-model="loginSuccess" color="success" timeout="3000">Welcome on board, {{ user.username }}</v-snackbar>
     <v-snackbar v-model="loginFailed" color="warning" timeout="3000">Login failed</v-snackbar>
 
@@ -80,6 +93,7 @@ export default {
       loginFailed: false,
       loginSuccess: false,
       logoutConfirmation: false,
+      preparation: true,
       generalProblem: false,
       generalProblemMsg: '',
       user: {}
@@ -91,8 +105,10 @@ export default {
     .then(body => {
       if(body.error) throw new Error(body.error)
       this.user = body
+      this.preparation = false
     })
     .catch(err => {
+      this.preparation = false
       this.generalProblemMsg = err.message
       this.generalProblem = true
     })
