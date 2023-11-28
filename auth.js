@@ -54,7 +54,7 @@ const auth = module.exports = {
         if(roleNums == null) {
             intersection.push(-1)
         } else {
-            roleNums.forEach((roleNum) => {
+            roleNums.forEach(roleNum => {
                 if(req.user && req.user.roles && req.user.roles.includes(roleNum)) {
                     intersection.push(roleNum)
                 }

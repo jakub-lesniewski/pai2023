@@ -19,7 +19,7 @@
       
       <v-list density="compact" nav>
         <template v-for="item in navigation" :key="item.title">
-          <v-list-item :href="item.href" :prepend-icon="item.icon" :title="item.title" exact/>
+          <v-list-item :href="item.href" :prepend-icon="item.icon" :title="item.title" exact v-if="showNav(item)"/>
         </template>
       </v-list>
 
@@ -60,34 +60,48 @@
 </template>
 
 <script>
+import common from './mixins/common'
+
 import Login from './components/Login.vue'
 import ConfirmationDialog from './components/ConfirmationDialog.vue'
 
 export default {
   name: 'App',
   components: { Login, ConfirmationDialog },
+  mixins: [ common ],
+  props: [ 'user' ],
   methods: {
+    setUser(data) {
+      Object.keys(this.user).forEach(key => delete this.user[key])
+      Object.assign(this.user, data)
+    },
     onSuccessfulLogin(data) {
-      this.user = data
+      this.setUser(data)
       this.loginDialog = false
       this.loginSuccess = true
     },
     onLogout() {
       this.logoutConfirmation = false
+      this.$router.push('/')
       fetch('/auth', { method: 'DELETE' })
       .then(res => res.json())
-      .then(() => this.user = {})
+      .then(() => {
+        Object.keys(this.user).forEach(key => delete this.user[key])
+      })
       .catch(err => {
         this.generalProblemMsg = err.message
         this.generalProblem = true
       })
+    },
+    showNav(item) {
+      return this.checkIfInRole(this.user, item.roles)
     }
   },
   data() {
     return {
       navigation: [
           { title: 'Dashboard', icon: 'mdi-view-dashboard', href: '#/' },
-          { title: 'Persons', icon: 'mdi-account-multiple', href: '#/persons' },
+          { title: 'Persons', icon: 'mdi-account-multiple', href: '#/persons', roles: [ 0, 1 ] },
           { title: 'Projects', icon: 'mdi-sitemap-outline', href: '#/projects' }
       ],
       loginDialog: false,
@@ -96,16 +110,15 @@ export default {
       logoutConfirmation: false,
       preparation: true,
       generalProblem: false,
-      generalProblemMsg: '',
-      user: {}
+      generalProblemMsg: ''
     }
   },
-  mounted() {
+  mounted() {    
     fetch('/auth', { method: 'GET' })
     .then(res => res.json())
-    .then(body => {
-      if(body.error) throw new Error(body.error)
-      this.user = body
+    .then(data => {
+      if(data.error) throw new Error(data.error)
+      this.setUser(data)
       this.preparation = false
     })
     .catch(err => {
