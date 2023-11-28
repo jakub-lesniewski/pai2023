@@ -51,15 +51,15 @@ app.post('/auth', passport.authenticate('json', { failWithError: true }), auth.l
 app.delete('/auth', auth.logout)
 
 // data endpoints
-app.get('/person', person.get)
-app.post('/person', person.post)
-app.put('/person', person.put)
-app.delete('/person', person.delete)
+app.get('/person', auth.checkIfInRole([ 0, 1 ]), person.get)
+app.post('/person', auth.checkIfInRole([ 0 ]), person.post)
+app.put('/person', auth.checkIfInRole([ 0 ]), person.put)
+app.delete('/person', auth.checkIfInRole([ 0 ]), person.delete)
 
-app.get('/project', project.get)
-app.post('/project', project.post)
-app.put('/project', project.put)
-app.delete('/project', project.delete)
+app.get('/project', project.get) // public
+app.post('/project', auth.checkIfInRole([ 0 ]), project.post)
+app.put('/project', auth.checkIfInRole([ 0 ]), project.put)
+app.delete('/project', auth.checkIfInRole([ 0 ]), project.delete)
 
 mongoose.connect(config.dbUrl).then(connection => {
     console.log('Database connected')

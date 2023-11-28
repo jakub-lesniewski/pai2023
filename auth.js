@@ -22,7 +22,19 @@ User.findOne({ username: 'admin' })
     console.error(err.message)
     process.exit(0)
 })
-        
+
+User.findOne({ username: 'user' })
+.then(user => {
+    if(!user) {
+        const admin = new User({ username: 'user', password: makeHash('user'), roles: [ 1 ] })
+        admin.save()
+    }
+})
+.catch(err => {
+    console.error(err.message)
+    process.exit(0)
+})
+
 const auth = module.exports = {
 
     makeHash,
@@ -49,11 +61,11 @@ const auth = module.exports = {
             })
         }
         if(!req.isAuthenticated()) {
-            res.status(401).json({ message: 'Unauthorized' })
+            res.status(401).json({ error: 'Unauthorized' })
         } else if(intersection.length > 0) {
             return nextTick()
         } else {
-            res.status(403).json({ message: 'Permission denied' })
+            res.status(403).json({ error: 'Permission denied' })
         }
     },
 

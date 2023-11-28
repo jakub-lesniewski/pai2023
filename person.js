@@ -45,7 +45,7 @@ module.exports = {
                 ]}}
             ]
             try {
-                let education = JSON.parse(req.query.education)
+                let education = req.query.education ? JSON.parse(req.query.education) : [ 0, 1, 2 ]
                 if(Array.isArray(education)) {
                     aggregation.push({ $match: { education: { $in: education } } })    
                 } else {
