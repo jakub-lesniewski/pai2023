@@ -68,8 +68,8 @@ module.exports = {
     },
 
     post: (req, res) => {
-        const person = new model(req.body)
-        person.save()
+        const instance = new model(req.body)
+        instance.save()
         .then(data => {
             res.json(data)
         })
