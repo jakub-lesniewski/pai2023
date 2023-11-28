@@ -44,16 +44,18 @@ module.exports = {
                     { lastName: { $regex: new RegExp(req.query.search, 'i') } }
                 ]}}
             ]
-            try {
-                let education = req.query.education ? JSON.parse(req.query.education) : [ 0, 1, 2 ]
-                if(Array.isArray(education)) {
-                    aggregation.push({ $match: { education: { $in: education } } })    
-                } else {
-                    throw new Error('education should be array')
+            if(req.query.education) {
+                try {
+                    const education = JSON.parse(req.query.education)
+                    if(Array.isArray(education)) {
+                        aggregation.push({ $match: { education: { $in: education } } })    
+                    } else {
+                        throw new Error('education should be array')
+                    }
+                } catch(err) {
+                    res.status(408).json({ error: err.message })
+                    return
                 }
-            } catch(err) {
-                res.status(408).json({ error: err.message })
-                return
             }
             aggregation.push({ $skip: parseInt(req.query.skip) || 0 })
             aggregation.push({ $limit: parseInt(req.query.limit) || 10 })
