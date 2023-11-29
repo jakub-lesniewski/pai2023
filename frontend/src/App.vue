@@ -15,11 +15,11 @@
 
   <v-app v-if="!preparation && !generalProblem">
 
-    <v-navigation-drawer expand-on-hover rail permanent>
+    <v-navigation-drawer v-model="showNavigation" expand-on-hover rail permanent>
       
       <v-list density="compact" nav>
         <template v-for="item in navigation" :key="item.title">
-          <v-list-item :href="item.href" :prepend-icon="item.icon" :title="item.title" exact v-if="showNav(item)"/>
+          <v-list-item :href="item.href" :prepend-icon="item.icon" :title="item.title" exact v-if="checkIfInRole(user, item.roles)"/>
         </template>
       </v-list>
 
@@ -53,7 +53,6 @@
       <ConfirmationDialog :question="'Are you sure to logout?'" @ok="onLogout" @cancel="logoutConfirmation = false"/>
     </v-dialog>
 
-    <v-snackbar v-model="loginSuccess" color="success" timeout="3000">Welcome on board, {{ user.username }}</v-snackbar>
     <v-snackbar v-model="loginFailed" color="warning" timeout="3000">Login failed</v-snackbar>
 
   </v-app>
@@ -78,23 +77,21 @@ export default {
     onSuccessfulLogin(data) {
       this.setUser(data)
       this.loginDialog = false
-      this.loginSuccess = true
     },
     onLogout() {
       this.logoutConfirmation = false
-      this.$router.push('/')
+      this.showNavigation = false
       fetch('/auth', { method: 'DELETE' })
       .then(res => res.json())
       .then(() => {
-        Object.keys(this.user).forEach(key => delete this.user[key])
+        this.setUser({})
+        this.$router.push('/')
+        this.showNavigation = true
       })
       .catch(err => {
         this.generalProblemMsg = err.message
         this.generalProblem = true
       })
-    },
-    showNav(item) {
-      return this.checkIfInRole(this.user, item.roles)
     }
   },
   data() {
@@ -104,9 +101,9 @@ export default {
           { title: 'Persons', icon: 'mdi-account-multiple', href: '#/persons', roles: [ 0, 1 ] },
           { title: 'Projects', icon: 'mdi-sitemap-outline', href: '#/projects' }
       ],
+      showNavigation: false,
       loginDialog: false,
       loginFailed: false,
-      loginSuccess: false,
       logoutConfirmation: false,
       preparation: true,
       generalProblem: false,
@@ -120,6 +117,7 @@ export default {
       if(data.error) throw new Error(data.error)
       this.setUser(data)
       this.preparation = false
+      this.showNavigation = true
     })
     .catch(err => {
       this.preparation = false
