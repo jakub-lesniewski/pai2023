@@ -33,15 +33,10 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(this.creds)
-        }).then(res => {
-            if(!res.ok) return Promise.reject()
-            res.json()
-            .then(data => this.$emit('loginSuccess', data))
-            .catch(() => this.emit('loginFailed'))
-        }).catch(() => {
-            this.$emit('loginFailed')
-          }
-        )
+        })
+        .then(res => res.json())
+        .then(data => this.$emit('loginSuccess', data))
+        .catch(() => this.emit('loginFailed'))
       }
     },
     data() {
