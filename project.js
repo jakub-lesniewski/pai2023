@@ -39,12 +39,20 @@ module.exports = {
         } else {
             let aggregation = [
                 { $sort: { name: 1 }},
-                { $match: 
-                    { name: { $regex: new RegExp(req.query.search, 'i') } }
-                }
+                { $match: { $or: [ 
+                    { name: { $regex: new RegExp(req.query.search, 'i') } },
+                    { shortcut: { $regex: new RegExp(req.query.search) } }
+                ]}},
+                { $skip: parseInt(req.query.skip) || 0 },
+                { $limit: parseInt(req.query.limit) || 1000 },
+                { $lookup: {
+                    from: 'people',
+                    localField: '_id',
+                    foreignField: 'projects',
+                    as: 'members'
+                }},
+                { $set: { members: { $size: '$members' }}}
             ]
-            aggregation.push({ $skip: parseInt(req.query.skip) || 0 })
-            aggregation.push({ $limit: parseInt(req.query.limit) || 10 })
             model.aggregate(aggregation)
             .then(data => {
                 res.json(data)

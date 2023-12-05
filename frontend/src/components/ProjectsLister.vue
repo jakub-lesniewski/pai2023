@@ -29,6 +29,9 @@
               <th class="text-left">
                 Start date
               </th>
+              <th class="text-left">
+                Members
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -36,6 +39,7 @@
               <td>{{ project.name }}</td>
               <td><v-chip :color="project.color">{{ project.shortcut }}</v-chip></td>
               <td>{{ new Date(project.startDate).toLocaleDateString() }}</td>
+              <td>{{ project.members }}</td>
             </tr>
           </tbody>
         </v-table>

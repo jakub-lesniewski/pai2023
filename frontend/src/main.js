@@ -29,7 +29,7 @@ const user = {}
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
-        { path: '/', component: Dashboard },
+        { path: '/', component: Dashboard, meta: { user } },
         { path: '/persons', component: PersonsLister, meta: { user } },
         { path: '/projects', component: ProjectsLister, meta: { user } }
     ]
