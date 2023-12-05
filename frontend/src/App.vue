@@ -42,7 +42,7 @@
     </v-navigation-drawer>
 
     <v-main>
-      <router-view></router-view>
+      <router-view :user="user"></router-view>
     </v-main>
 
     <v-dialog v-model="loginDialog" width="25em">
@@ -68,15 +68,17 @@ export default {
   name: 'App',
   components: { Login, ConfirmationDialog },
   mixins: [ common ],
-  props: [ 'user' ],
   methods: {
     setUser(data) {
       Object.keys(this.user).forEach(key => delete this.user[key])
       Object.assign(this.user, data)
     },
     onSuccessfulLogin(data) {
-      this.setUser(data)
       this.loginDialog = false
+      this.showNavigation = false
+      this.setUser(data)
+      this.$router.push('/')
+      this.showNavigation = true
     },
     onLogout() {
       this.logoutConfirmation = false
@@ -96,6 +98,7 @@ export default {
   },
   data() {
     return {
+      user: {},
       navigation: [
           { title: 'Dashboard', icon: 'mdi-view-dashboard', href: '#/' },
           { title: 'Persons', icon: 'mdi-account-multiple', href: '#/persons', roles: [ 0, 1 ] },

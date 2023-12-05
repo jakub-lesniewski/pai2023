@@ -12,7 +12,7 @@
             <v-slider density="compact" v-model="limit" min="5" max="100" step="5" thumb-label @update:modelValue="retrieve"></v-slider>
           </v-col>
           <v-col cols="1">
-            <v-btn variant="elevated" color="success" @click="add" v-if="checkIfInRole($route.meta.user, [ 0 ])">Add</v-btn>
+            <v-btn variant="elevated" color="success" @click="add" v-if="checkIfInRole(user, [ 0 ])">Add</v-btn>
           </v-col>
         </v-row>
       </v-card-subtitle>
@@ -63,6 +63,7 @@ export default {
   name: 'ProjectsLister',
   components: { ProjectEditor },
   mixins: [ common ],
+  props: [ 'user' ],
   methods: {
     retrieve() {
       this.id = null
@@ -80,7 +81,7 @@ export default {
       this.editor = true
     },
     click(row) {
-      if(!this.checkIfInRole(this.$route.meta.user, [ 0 ])) return
+      if(!this.checkIfInRole(this.user, [ 0 ])) return
       this.id = row._id
       this.editor = true
     },

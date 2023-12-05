@@ -23,16 +23,13 @@ import Dashboard from './components/Dashboard.vue'
 import PersonsLister from './components/PersonsLister.vue'
 import ProjectsLister from './components/ProjectsLister.vue'
 
-// root properties
-const user = {} 
-
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
-        { path: '/', component: Dashboard, meta: { user } },
-        { path: '/persons', component: PersonsLister, meta: { user } },
-        { path: '/projects', component: ProjectsLister, meta: { user } }
+        { path: '/', component: Dashboard },
+        { path: '/persons', component: PersonsLister },
+        { path: '/projects', component: ProjectsLister }
     ]
 })
 
-createApp(App, { user }).use(vuetify).use(router).mount('#app')
+createApp(App).use(vuetify).use(router).mount('#app')
