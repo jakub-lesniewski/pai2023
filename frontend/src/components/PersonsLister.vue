@@ -37,6 +37,9 @@
               <th class="text-left">
                 Education
               </th>
+              <th class="text-left">
+                Projects
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -45,6 +48,11 @@
               <td>{{ person.lastName }}</td>
               <td>{{ new Date(person.birthDate).toLocaleDateString() }}</td>
               <td>{{ [ 'primary', 'secondary', 'high' ][person.education] }}</td>
+              <td>
+                <v-chip v-for="(project, pindex) in person.projects" :key="pindex" :color="project.color">
+                  {{ project.shortcut }}
+                </v-chip>
+              </td>
             </tr>
           </tbody>
         </v-table>

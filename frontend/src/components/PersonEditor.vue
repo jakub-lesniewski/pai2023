@@ -12,6 +12,9 @@
             <v-chip value="1">secondary</v-chip>
             <v-chip value="2">high</v-chip>
           </v-chip-group>
+          <v-select v-model="person.projects" label="Projects" multiple chips
+              :items="projects.map(project => ({ value: project._id, title: project.name }))"
+          ></v-select>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -87,10 +90,18 @@ export default {
       },
       person: {},
       dialog: false,
-      confirmation: false     
+      confirmation: false,
+      projects: []     
     }
   },
   mounted() {
+    fetch('/project', { method: 'GET' })
+    .then(res => res.json())
+    .then(data => this.projects = data)
+    .catch(err => {
+      this.$emit('dataAccessFailed', err.message)
+      return
+    })
     if(this.id) {
       fetch('/person?_id=' + this.id, { method: 'GET' })
       .then(res => res.json())
