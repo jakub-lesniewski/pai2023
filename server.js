@@ -10,9 +10,11 @@ const mongoose = require('mongoose')
 const expressSession = require('express-session')
 const passport = require('passport')
 const passportJson = require('passport-json')
+const expressWs = require('express-ws')
 
 // own modules
 const auth = require('./auth')
+const websocket = require('./websocket')
 const person = require('./person')
 const project = require('./project')
 
@@ -44,6 +46,10 @@ passport.deserializeUser(auth.deserialize)
 
 // static content
 app.use(express.static(config.frontend))
+
+// websockets handling
+const wsInstance = expressWs(app)
+app.ws('/websocket', websocket(wsInstance))
 
 // authentication endpoints
 app.get('/auth', auth.whoami)
