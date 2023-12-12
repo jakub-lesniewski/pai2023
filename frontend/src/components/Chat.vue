@@ -3,7 +3,7 @@
         <v-card-title>Chat</v-card-title>
         <v-card-text>
             <v-list>
-                <v-list-item v-for="(event, index) in posts" :key="index" :subtitle="event.username" :class="getItemClass(event)">
+                <v-list-item v-for="(event, index) in posts" :key="index" :subtitle="event.sender" :class="getItemClass(event)">
                 {{ event.message }}
                 </v-list-item>
             </v-list>
@@ -30,22 +30,22 @@ export default {
         send() {
             this.connection.send(JSON.stringify({
                 event: 'POST',
-                username: this.user.username || 'not-logged-in',
                 message: this.message
             }))    
         },
         getItemClass(event) {
-            return event.username == this.user.username ? 'toRight' : 'toLeft'
+            return event.sender == this.user.username ? 'toRight' : 'toLeft'
         }
     },
     mounted() {
         this.connection = new WebSocket('ws://' + window.location.host + '/websocket')
         this.connection.onopen = () => {
             console.log('Websocket connection established')
-            this.connection.send(JSON.stringify({
-                event: 'CONNECTION',
-                username: this.user.username || 'not-logged-in'
-            }))
+            setTimeout(() =>
+                this.connection.send(JSON.stringify({
+                    event: 'CONNECTION'
+                }))
+            , 100)
         }
         this.connection.onmessage = (event) => {
             let data = {}
