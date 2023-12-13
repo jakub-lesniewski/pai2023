@@ -42,7 +42,7 @@
     </v-navigation-drawer>
 
     <v-main>
-      <router-view :user="user"></router-view>
+      <router-view :user="user" :websocket="websocket" :eventSet="eventSet"></router-view>
     </v-main>
 
     <v-dialog v-model="loginDialog" width="25em">
@@ -111,23 +111,41 @@ export default {
       logoutConfirmation: false,
       preparation: true,
       generalProblem: false,
-      generalProblemMsg: ''
+      generalProblemMsg: '',
+      websocket: null,
+      eventSet: {}
     }
   },
-  mounted() {    
-    fetch('/auth', { method: 'GET' })
-    .then(res => res.json())
-    .then(data => {
-      if(data.error) throw new Error(data.error)
-      this.setUser(data)
-      this.preparation = false
-      this.showNavigation = true
-    })
-    .catch(err => {
-      this.preparation = false
-      this.generalProblemMsg = err.message
-      this.generalProblem = true
-    })
+  mounted() {   
+    this.websocket = new WebSocket('ws://' + window.location.host + '/websocket')
+
+    this.websocket.onopen = () => {
+      fetch('/auth', { method: 'GET' })
+      .then(res => res.json())
+      .then(data => {
+        if(data.error) throw new Error(data.error)
+        this.setUser(data)
+        this.preparation = false
+        this.showNavigation = true
+        this.websocket.send(JSON.stringify({ event: 'CONNECTION' }))
+      })
+      .catch(err => {
+        this.preparation = false
+        this.generalProblemMsg = err.message
+        this.generalProblem = true
+      })
+    }
+
+    this.websocket.onmessage = (event) => {
+        let data = {}
+        try { data = JSON.parse(event.data) } catch(err) {
+            console.error(err.message, event.data)
+            return
+        }
+        if(data.event) {
+          this.eventSet[data.event] = data
+        }
+    } 
   }
 }
 </script>

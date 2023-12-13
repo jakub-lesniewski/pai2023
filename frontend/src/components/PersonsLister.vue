@@ -76,7 +76,7 @@ export default {
   name: 'PersonsLister',
   components: { PersonEditor },
   mixins: [ common ],
-  props: [ 'user' ],
+  props: [ 'user', 'websocket', 'eventSet' ],
   methods: {
     retrieve() {
       this.id = null

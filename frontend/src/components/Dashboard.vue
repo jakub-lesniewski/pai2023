@@ -14,7 +14,7 @@
 <script>
 export default {
     name: 'DashboardView',
-    props: [ 'user' ]
+    props: [ 'user', 'websocket', 'eventSet' ]
 }
 </script>
   

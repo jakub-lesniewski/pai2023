@@ -63,7 +63,7 @@ export default {
   name: 'ProjectsLister',
   components: { ProjectEditor },
   mixins: [ common ],
-  props: [ 'user' ],
+  props: [ 'user', 'websocket', 'eventSet' ],
   methods: {
     retrieve() {
       this.id = null

@@ -18,6 +18,7 @@ module.exports = wsInstance => (ws, req) => {
                 sessions[key] = JSON.parse(req.sessionStore.sessions[key])
             } catch(err) {}
         }
+        data.timestamp = new Date().toISOString()
         wsInstance.getWss().clients.forEach(client => {
             if(client.sessionID // czy klient wysłał CONNECTION
                && sessions[client.sessionID] // czy ma prawidłową sesję

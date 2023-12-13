@@ -3,61 +3,52 @@
         <v-card-title>Chat</v-card-title>
         <v-card-text>
             <v-list>
-                <v-list-item v-for="(event, index) in posts" :key="index" :subtitle="event.sender" :class="getItemClass(event)">
+                <v-list-item v-for="(event, index) in posts" :key="index"
+                :subtitle="event.sender + ' ' + event.timestamp.slice(11, 16)"
+                :class="getItemClass(event)">
                 {{ event.message }}
                 </v-list-item>
             </v-list>
         </v-card-text>
         <v-card-actions>
-            <v-text-field variant="solo" label="Message" v-model="message"></v-text-field>
-            <v-btn variant="elevated" color="success" @click="send">Send</v-btn>
+            <v-text-field variant="solo" label="Message" v-model="message">
+                <template #append-inner>
+                    <v-btn variant="elevated" color="success" @click="send">Send</v-btn>
+                </template>
+            </v-text-field>
         </v-card-actions>
     </v-card>
 </template>
   
 <script>
+import { watch } from 'vue'
+
 export default {
     name: 'ChatView',
-    props: [ 'user' ],
+    props: [ 'user', 'websocket', 'eventSet' ],
     data() {
         return {
-            connection: null,
             message: '',
             posts: []
         }
     },
     methods: {
         send() {
-            this.connection.send(JSON.stringify({
+            this.websocket.send(JSON.stringify({
                 event: 'POST',
                 message: this.message
             }))    
+            this.message = ''
         },
         getItemClass(event) {
             return event.sender == this.user.username ? 'toRight' : 'toLeft'
         }
     },
     mounted() {
-        this.connection = new WebSocket('ws://' + window.location.host + '/websocket')
-        this.connection.onopen = () => {
-            console.log('Websocket connection established')
-            setTimeout(() =>
-                this.connection.send(JSON.stringify({
-                    event: 'CONNECTION'
-                }))
-            , 100)
-        }
-        this.connection.onmessage = (event) => {
-            let data = {}
-            try {
-                data = JSON.parse(event.data)
-            } catch(err) {
-                console.error(err.message, event.data)
-                return
-            }
-            if(data.event == 'POST') this.posts.push(data)
-        }
-    }    
+        watch(() => this.eventSet.POST, () => {
+            this.posts.push(this.eventSet.POST)
+        })
+    }
 }
 </script>
   
