@@ -8,25 +8,28 @@ module.exports = wsInstance => (ws, req) => {
             return
         }
         data.sender = req.session.passport ? req.session.passport.user : null
+        data.timestamp = new Date().toISOString()
+        console.log('WS:', JSON.stringify(data))
         if(data.event == 'CONNECTION') {
             ws.sessionID = req.sessionID
             return
         }
-        let sessions = {}
-        for(let key in req.sessionStore.sessions) {
-            try {
-                sessions[key] = JSON.parse(req.sessionStore.sessions[key])
-            } catch(err) {}
-        }
-        data.timestamp = new Date().toISOString()
-        wsInstance.getWss().clients.forEach(client => {
-            if(client.sessionID // czy klient wysłał CONNECTION
-               && sessions[client.sessionID] // czy ma prawidłową sesję
-               && sessions[client.sessionID].passport
-               && sessions[client.sessionID].passport.user // czy jest zalogowany
-            ) {
-                client.send(JSON.stringify(data))
+        req.sessionStore.all((err, sessions) => {
+            if(err) {
+                console.log('WS broadcasting failed:', err.message)
+                return
             }
+            wsInstance.getWss().clients.forEach(client => {
+                if(client.sessionID // czy klient wysłał CONNECTION
+                     && sessions[client.sessionID] // czy ma prawidłową sesję
+                     && sessions[client.sessionID].passport
+                     && sessions[client.sessionID].passport.user // czy jest zalogowany
+                   ) {
+                    console.log('WS send to:', client.sessionID, '(' + sessions[client.sessionID].passport.user + ')')
+                    client.send(JSON.stringify(data))
+                }
+            })
+   
         })
     })
 }

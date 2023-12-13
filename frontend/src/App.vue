@@ -120,13 +120,16 @@ export default {
     this.websocket = new WebSocket('ws://' + window.location.host + '/websocket')
 
     this.websocket.onopen = () => {
+      console.log('Connected, asking who I am')
       fetch('/auth', { method: 'GET' })
       .then(res => res.json())
       .then(data => {
         if(data.error) throw new Error(data.error)
+        console.log('I am', JSON.stringify(data))
         this.setUser(data)
         this.preparation = false
         this.showNavigation = true
+        console.log('Sending a connection message')
         this.websocket.send(JSON.stringify({ event: 'CONNECTION' }))
       })
       .catch(err => {
@@ -143,6 +146,7 @@ export default {
             return
         }
         if(data.event) {
+          console.log('Store the event', JSON.stringify(data))
           this.eventSet[data.event] = data
         }
     } 

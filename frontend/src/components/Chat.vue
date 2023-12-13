@@ -11,11 +11,13 @@
             </v-list>
         </v-card-text>
         <v-card-actions>
-            <v-text-field variant="solo" label="Message" v-model="message">
-                <template #append-inner>
-                    <v-btn variant="elevated" color="success" @click="send">Send</v-btn>
-                </template>
-            </v-text-field>
+            <v-form style="width: 100%;">
+                <v-text-field variant="solo" label="Message" v-model="message">
+                    <template #append-inner>
+                        <v-btn variant="elevated" color="success" @click="send" type="submit">Send</v-btn>
+                    </template>
+                </v-text-field>
+            </v-form>
         </v-card-actions>
     </v-card>
 </template>
