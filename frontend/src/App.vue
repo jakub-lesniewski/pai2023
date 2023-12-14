@@ -70,8 +70,11 @@ export default {
   mixins: [ common ],
   methods: {
     setUser(data) {
-      Object.keys(this.user).forEach(key => delete this.user[key])
+      Object.keys(this.user).forEach(key => {
+        if(key != 'sessionid') delete this.user[key] 
+      })
       Object.assign(this.user, data)
+      this.websocket.send(JSON.stringify({ event: 'CONNECTION', sessionid: this.user.sessionid }))
     },
     onSuccessfulLogin(data) {
       this.loginDialog = false
@@ -129,8 +132,6 @@ export default {
         this.setUser(data)
         this.preparation = false
         this.showNavigation = true
-        console.log('Sending a connection message')
-        this.websocket.send(JSON.stringify({ event: 'CONNECTION' }))
       })
       .catch(err => {
         this.preparation = false

@@ -7,11 +7,9 @@ module.exports = wsInstance => (ws, req) => {
             console.error(err.message, rawData)
             return
         }
-        data.sender = req.session.passport ? req.session.passport.user : null
-        data.timestamp = new Date().toISOString()
-        console.log('WS:', JSON.stringify(data))
         if(data.event == 'CONNECTION') {
-            ws.sessionID = req.sessionID
+            console.log('WS: connected', data.sessionid)
+            ws.sessionID = data.sessionid
             return
         }
         req.sessionStore.all((err, sessions) => {
@@ -19,6 +17,9 @@ module.exports = wsInstance => (ws, req) => {
                 console.log('WS broadcasting failed:', err.message)
                 return
             }
+            data.sender = ws.sessionID && sessions[ws.sessionID] && sessions[ws.sessionID].passport && sessions[ws.sessionID].passport.user
+            data.timestamp = new Date().toISOString()
+            console.log('WS: get', JSON.stringify(data))
             wsInstance.getWss().clients.forEach(client => {
                 if(client.sessionID // czy klient wysłał CONNECTION
                      && sessions[client.sessionID] // czy ma prawidłową sesję
