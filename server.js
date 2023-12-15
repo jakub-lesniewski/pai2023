@@ -14,6 +14,7 @@ const expressWs = require('express-ws')
 
 // own modules
 const auth = require('./auth')
+const control = require('./control')
 const websocket = require('./websocket')
 const person = require('./person')
 const project = require('./project')
@@ -55,6 +56,9 @@ app.ws('/websocket', websocket(wsInstance))
 app.get('/auth', auth.whoami)
 app.post('/auth', passport.authenticate('json', { failWithError: true }), auth.login, auth.errorHandler)
 app.delete('/auth', auth.logout)
+
+// control endpoint
+app.get('/control/:what', auth.checkIfInRole([ 0 ]), control.get)
 
 // data endpoints
 app.get('/person', auth.checkIfInRole([ 0, 1 ]), person.get)

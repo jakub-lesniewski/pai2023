@@ -106,7 +106,8 @@ export default {
           { title: 'Dashboard', icon: 'mdi-view-dashboard', href: '#/' },
           { title: 'Persons', icon: 'mdi-account-multiple', href: '#/persons', roles: [ 0, 1 ] },
           { title: 'Projects', icon: 'mdi-sitemap-outline', href: '#/projects' },
-          { title: 'Chat', icon: 'mdi-chat-processing-outline', href: '#/chat', roles: [ 0, 1 ] }
+          { title: 'Chat', icon: 'mdi-chat-processing-outline', href: '#/chat', roles: [ 0, 1 ] },
+          { title: 'Control Panel', icon: 'mdi-tools', href: '#/control', roles: [ 0 ] }
       ],
       showNavigation: false,
       loginDialog: false,
