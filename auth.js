@@ -11,6 +11,7 @@ const makeHash = password => {
     return crypto.createHash('sha256').update(password).digest('base64')
 }
 
+// create admin if not exists
 User.findOne({ username: 'admin' })
 .then(user => {
     if(!user) {
@@ -23,6 +24,7 @@ User.findOne({ username: 'admin' })
     process.exit(0)
 })
 
+// create user if not exists
 User.findOne({ username: 'user' })
 .then(user => {
     if(!user) {
@@ -41,12 +43,8 @@ const auth = module.exports = {
 
     checkCredentials: (username, password, nextTick) => {
         User.findOne({ username, password: auth.makeHash(password) })
-        .then(user => {
-            nextTick(null, user || false)
-        })
-        .catch(err => {
-            nextTick(null, false)
-        })
+        .then(user => nextTick(null, user || false))
+        .catch(err => nextTick(null, false))
     },
 
     checkIfInRole: roleNums => (req, res, nextTick) => {
@@ -69,9 +67,7 @@ const auth = module.exports = {
         }
     },
 
-    serialize: (user, nextTick) => {
-        nextTick(null, user.username)
-    },
+    serialize: (user, nextTick) => nextTick(null, user.username),
 
     deserialize: (username, nextTick) => {
         User.findOne({ username })
@@ -79,10 +75,10 @@ const auth = module.exports = {
             if(user) {
                 return nextTick(null, user)
             } else {
-                return nextTick('No such user', null)
+                return nextTick(new Error('No such user'), null)
             }
         })
-        .catch(err => { error: err.message })
+        .catch(err => ({ error: err.message }))
     },
 
     login: (req, res) => auth.whoami(req, res),
@@ -100,5 +96,17 @@ const auth = module.exports = {
         res.json(data)
     },
 
-    errorHandler: (err, req, res, nextTick) => res.status(401).json({ error: err.message })
+    errorHandler: (err, req, res, nextTick) => res.status(401).json({ error: err.message }),
+
+    getUsers: nextTick => {
+        User.find()
+        .then(users => {
+            users.forEach(user => {
+                delete user._id
+                user.password = user.password ? 1 : 0
+            })
+            nextTick(null, users)
+        })
+        .catch(err => nextTick(err, null))
+    }
 }

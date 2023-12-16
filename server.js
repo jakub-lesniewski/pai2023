@@ -57,9 +57,6 @@ app.get('/auth', auth.whoami)
 app.post('/auth', passport.authenticate('json', { failWithError: true }), auth.login, auth.errorHandler)
 app.delete('/auth', auth.logout)
 
-// control endpoint
-app.get('/control/:what', auth.checkIfInRole([ 0 ]), control.get)
-
 // data endpoints
 app.get('/person', auth.checkIfInRole([ 0, 1 ]), person.get)
 app.post('/person', auth.checkIfInRole([ 0 ]), person.post)
@@ -74,6 +71,9 @@ app.delete('/project', auth.checkIfInRole([ 0 ]), project.delete)
 mongoose.connect(config.dbUrl).then(connection => {
     console.log('Database connected')
     
+    // control endpoint
+    app.get('/control/:what', auth.checkIfInRole([ 0 ]), control.get(wsInstance, connection))
+
     // initialization of the models
     person.init(connection)
     project.init(connection)
