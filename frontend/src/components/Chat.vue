@@ -13,8 +13,11 @@
         <v-card-actions>
             <v-form style="width: 100%;">
                 <v-row>
-                <v-col cols="3">
-                <v-text-field variant="solo" label="Recipient" v-model="recipient"></v-text-field>   
+                <v-col cols="4">
+                <v-select v-model="recipient" label="Recipient" clearable
+                  :items="activeUsers"
+                ></v-select>
+ 
                 </v-col>
                 <v-col>
                 <v-text-field variant="solo" label="Message" v-model="message">
@@ -38,6 +41,7 @@ export default {
     data() {
         return {
             recipient: '',
+            activeUsers: [],
             message: '',
             posts: []
         }
@@ -61,6 +65,13 @@ export default {
         watch(() => this.eventSet.POST, () => {
             this.posts.push(this.eventSet.POST)
         })
+        fetch('/listUsers', { method: 'GET' })
+        .then(res => res.json())
+        .then(data => { 
+            if(data.error) throw new Error(data.error)
+            this.activeUsers = data 
+        })
+        .catch(err => console.error(err.message))
     }
 }
 </script>
