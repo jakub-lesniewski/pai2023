@@ -13,4 +13,10 @@
 1. Z przeglądarki połączyć się z https://localhost:8000 (port z konfiguracji)
 
 ## Zadania zaliczeniowe
-Będą pod koniec semestru...
+
+### Zadanie na 3
+1. Każdy projekt ma swojego managera (jeden z członków projektu).
+1. Wprowadzamy nowy byt: zadanie (Task). Każde zadanie ma nazwę, należy do jednego projektu, ma osoby odpowiedzielne za wykonanie, które muszą być członkami projektu, ma czas rozpoczęcia i opcjonalny zakończenia.
+1. Stworzyć interfejs do zarządzania zadaniami projektu, dostępny dla użytkownika w roli 1
+1. Użytkownik wybiera projekt i na liście zadań do niego przypisanych może wykonywać operacje CRUD, tak jak na osobach i projektach. Uwzględnić wyszukiwanie po nazwie zadania.
+1. Użytkownik może zaznaczyć grupę niezakończonych zadań projektu i jednym przyciskiem ustawić datę zakończenia na aktualną.
