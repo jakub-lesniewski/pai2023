@@ -12,11 +12,18 @@
         </v-card-text>
         <v-card-actions>
             <v-form style="width: 100%;">
+                <v-row>
+                <v-col cols="3">
+                <v-text-field variant="solo" label="Recipient" v-model="recipient"></v-text-field>   
+                </v-col>
+                <v-col>
                 <v-text-field variant="solo" label="Message" v-model="message">
                     <template #append-inner>
                         <v-btn variant="elevated" color="success" @click="send" type="submit">Send</v-btn>
                     </template>
                 </v-text-field>
+                </v-col>
+                </v-row>
             </v-form>
         </v-card-actions>
     </v-card>
@@ -30,20 +37,24 @@ export default {
     props: [ 'user', 'websocket', 'eventSet' ],
     data() {
         return {
+            recipient: '',
             message: '',
             posts: []
         }
     },
     methods: {
         send() {
-            this.websocket.send(JSON.stringify({
+            let event = {
                 event: 'POST',
                 message: this.message
-            }))    
+            }
+            if(this.recipient) event.recipient = this.recipient
+            this.websocket.send(JSON.stringify(event))    
             this.message = ''
         },
         getItemClass(event) {
-            return event.sender == this.user.username ? 'toRight' : 'toLeft'
+            return (event.sender == this.user.username ? 'toRight' : 'toLeft') +
+                ' ' + (event.recipient ? 'unicast' : 'broadcast') 
         }
     },
     mounted() {
@@ -57,4 +68,6 @@ export default {
 <style scoped>
 .toLeft { text-align: left; }
 .toRight { text-align: right; }
+.unicast { color: black; }
+.broadcast { color: green; }
 </style>

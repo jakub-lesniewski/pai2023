@@ -31,8 +31,13 @@ module.exports = wsInstance => (ws, req) => {
                      && sessions[client.sessionID].passport
                      && sessions[client.sessionID].passport.user // czy jest zalogowany
                    ) {
-                    console.log('WS event send to:', client.sessionID, '(' + sessions[client.sessionID].passport.user + ')')
-                    client.send(JSON.stringify(data))
+                    let recipient = sessions[client.sessionID].passport.user
+                    if(!data.recipient || data.recipient == recipient || data.sender == recipient) {
+                        console.log('WS event send to:', client.sessionID, '(' + recipient + ')')
+                        client.send(JSON.stringify(data))
+                    } else {
+                        console.log('WS skipped for', recipient)
+                    }
                 }
             })
    

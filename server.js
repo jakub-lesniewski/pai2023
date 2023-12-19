@@ -16,6 +16,7 @@ const expressWs = require('express-ws')
 const auth = require('./auth')
 const control = require('./control')
 const websocket = require('./websocket')
+const chat = require('./chat')
 const person = require('./person')
 const project = require('./project')
 
@@ -67,6 +68,8 @@ app.get('/project', project.get) // public
 app.post('/project', auth.checkIfInRole([ 0 ]), project.post)
 app.put('/project', auth.checkIfInRole([ 0 ]), project.put)
 app.delete('/project', auth.checkIfInRole([ 0 ]), project.delete)
+
+app.get('/listUsers', auth.checkIfInRole([ 0, 1 ]), chat.listUsers(wsInstance))
 
 mongoose.connect(config.dbUrl).then(connection => {
     console.log('Database connected')
