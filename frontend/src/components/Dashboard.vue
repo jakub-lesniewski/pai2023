@@ -1,22 +1,35 @@
 <template>
     <div>
-        <h1>Dashboard</h1>
-        <br/>
-        <h3>
-            Dear {{ user.username || 'not-logged-in' }},
-        </h3>
-        <div>
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-        </div>
+        <v-row>
+            <v-col>
+                <h1>Dashboard</h1>
+            </v-col>
+            <v-col>
+                <div :class="{ login: true, notLoggedIn: !user.username }">{{ user.username || 'not-logged-in' }}</div>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col cols="6">
+                <ProjectChart/>
+            </v-col>
+            <v-col cols="6">
+
+            </v-col>
+        </v-row>    
     </div>
 </template>
   
 <script>
+import ProjectChart from './ProjectChart.vue'
+
 export default {
     name: 'DashboardView',
+    components: { ProjectChart },
     props: [ 'user', 'websocket', 'eventSet' ]
 }
 </script>
   
 <style scoped>
+.login { text-align: right; }
+.notLoggedIn { font-style: italic; }
 </style>
