@@ -61,22 +61,24 @@ module.exports = {
             if(req.query.minProjects) {
                 let minProjects = parseInt(minProjects)
                 if(minProjects >= 1) {
-                    aggregation.push({ $match: { projects: { $exists: true } } })
-                    aggregation.push({ $set: { projectsCount: { $size: "$projects" } } })
-                    aggregation.push({ $match: { projectsCount: { $gte: +req.query.minProjects } } })
+                    aggregation.push(...[
+                        { $match: { projects: { $exists: true } } },
+                        { $set: { projectsCount: { $size: "$projects" } } },
+                        { $match: { projectsCount: { $gte: minProjects } } }
+                    ])
                 }
             }
-            aggregation.push({ $skip: parseInt(req.query.skip) || 0 })
-            aggregation.push({ $limit: parseInt(req.query.limit) || 10 })
-            aggregation.push({ $lookup: {
-                from: 'projects',
-                pipeline: [
-                    { $sort: { name: 1 }}
-                ],
-                localField: 'projects',
-                foreignField: '_id',
-                as: 'projects'
-            }})
+            aggregation.push(...[
+                { $skip: parseInt(req.query.skip) || 0 },
+                { $limit: parseInt(req.query.limit) || 10 },
+                { $lookup: {
+                    from: 'projects',
+                    pipeline: [ { $sort: { name: 1 } } ],
+                    localField: 'projects',
+                    foreignField: '_id',
+                    as: 'projects'
+                }}
+            ])
             model.aggregate(aggregation)
             .then(data => {
                 res.json(data)
