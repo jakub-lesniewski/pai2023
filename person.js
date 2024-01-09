@@ -59,7 +59,7 @@ module.exports = {
                 }
             }
             if(req.query.minProjects) {
-                let minProjects = parseInt(minProjects)
+                let minProjects = parseInt(req.query.minProjects)
                 if(minProjects >= 1) {
                     aggregation.push(...[
                         { $match: { projects: { $exists: true } } },
