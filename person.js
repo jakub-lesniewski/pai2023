@@ -58,6 +58,14 @@ module.exports = {
                     return
                 }
             }
+            if(req.query.minProjects) {
+                let minProjects = parseInt(minProjects)
+                if(minProjects >= 1) {
+                    aggregation.push({ $match: { projects: { $exists: true } } })
+                    aggregation.push({ $set: { projectsCount: { $size: "$projects" } } })
+                    aggregation.push({ $match: { projectsCount: { $gte: +req.query.minProjects } } })
+                }
+            }
             aggregation.push({ $skip: parseInt(req.query.skip) || 0 })
             aggregation.push({ $limit: parseInt(req.query.limit) || 10 })
             aggregation.push({ $lookup: {
