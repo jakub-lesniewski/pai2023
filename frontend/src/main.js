@@ -24,6 +24,7 @@ import ControlPanel from './components/ControlPanel.vue'
 import Chat from './components/Chat.vue'
 import PersonsLister from './components/PersonsLister.vue'
 import ProjectsLister from './components/ProjectsLister.vue'
+import ProjectsMap from './components/ProjectsMap.vue'
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -32,7 +33,8 @@ const router = createRouter({
         { path: '/control', component: ControlPanel },
         { path: '/chat', component: Chat },
         { path: '/persons', component: PersonsLister },
-        { path: '/projects', component: ProjectsLister }
+        { path: '/projects', component: ProjectsLister },
+        { path: '/map', component: ProjectsMap }
     ]
 })
 
