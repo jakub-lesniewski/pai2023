@@ -20,3 +20,13 @@
 1. Stworzyć interfejs do zarządzania zadaniami projektu, dostępny dla użytkownika w roli 1
 1. Użytkownik wybiera projekt i na liście zadań do niego przypisanych może wykonywać operacje CRUD, tak jak na osobach i projektach. Uwzględnić wyszukiwanie po nazwie zadania.
 1. Użytkownik może zaznaczyć grupę niezakończonych zadań projektu i jednym przyciskiem ustawić datę zakończenia na aktualną.
+
+### Zadanie na 4
+Do zadania na 3 dodać:
+1. W widoku zadań dodać diagram Gantta dla projektu: na osi x daty, na osi y zadania. Zadania reprezentowane są przez prostokąty (odcinki) od daty do daty. Zadania bez daty końca są pokazywane innym kolorem, a ich data końca jest datą aktualną. Wykres ma aktualizować się automatycznie przy każdej zmianie zadań projektu.
+1. W widoku osób dodać przy każdej osobie przycisk, aktywujące okienko modalne z diagramem Gantta zadań danej osoby.
+
+### Zadanie na 5
+Do zadania na 4 dodać:
+1. Każdy użytkownik w roli x jest powiadamiany (za pomocą v-snackbar'a) o zalogowaniu się innego użytkownika o tej samej roli.
+1. Wyświetlane dane o zadaniach oraz diagramy mają się odświeżać w momencie, gdy inny użytkownik o odpowiednim poziomie praw dokona zmian w zakresie zadań.
