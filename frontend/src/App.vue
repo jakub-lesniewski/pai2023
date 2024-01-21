@@ -27,9 +27,10 @@
 
       <v-list v-if="user.username">
         <v-list-item
-          :prepend-avatar="require('./assets/user.png')"
+          :prepend-avatar="'/uploads/avatar.jpg?' + cacheKey"
           :title="user.username"
           :subtitle="user.email"
+          @click="uploadFileDialog = true"
         >
         </v-list-item>
       </v-list>
@@ -49,6 +50,10 @@
       <Login @cancel="loginDialog = false" @loginFailed="loginDialog = false; loginFailed = true" @loginSuccess="onSuccessfulLogin"/>
     </v-dialog>
 
+    <v-dialog v-model="uploadFileDialog" width="25em">
+      <UploadFile @close="closeUploadFileDialog"/>
+    </v-dialog>
+
     <v-dialog v-model="logoutConfirmation" width="auto">
       <ConfirmationDialog :question="'Are you sure to logout?'" @ok="onLogout" @cancel="logoutConfirmation = false"/>
     </v-dialog>
@@ -63,10 +68,11 @@ import common from './mixins/common'
 
 import Login from './components/Login.vue'
 import ConfirmationDialog from './components/ConfirmationDialog.vue'
+import UploadFile from './components/UploadFile.vue'
 
 export default {
   name: 'App',
-  components: { Login, ConfirmationDialog },
+  components: { Login, ConfirmationDialog, UploadFile },
   mixins: [ common ],
   methods: {
     setUser(data) {
@@ -97,6 +103,10 @@ export default {
         this.generalProblemMsg = err.message
         this.generalProblem = true
       })
+    },
+    closeUploadFileDialog() {
+      this.uploadFileDialog = false
+      this.cacheKey = Date.now()
     }
   },
   data() {
@@ -114,11 +124,13 @@ export default {
       loginDialog: false,
       loginFailed: false,
       logoutConfirmation: false,
+      uploadFileDialog: false,
       preparation: true,
       generalProblem: false,
       generalProblemMsg: '',
       websocket: null,
-      eventSet: {}
+      eventSet: {},
+      cacheKey: Date.now()
     }
   },
   mounted() {   
