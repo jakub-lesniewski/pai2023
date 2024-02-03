@@ -20,6 +20,7 @@ const websocket = require('./websocket')
 const chat = require('./chat')
 const person = require('./person')
 const project = require('./project')
+const task = require('./tasks')
 
 let config = {}
 try {
@@ -85,6 +86,11 @@ app.post('/project', auth.checkIfInRole([ 0 ]), project.post)
 app.put('/project', auth.checkIfInRole([ 0 ]), project.put)
 app.delete('/project', auth.checkIfInRole([ 0 ]), project.delete)
 
+app.get('/task', task.get) // public
+app.post('/task', task.post)
+app.put('/task', auth.checkIfInRole([ 0 ]), task.put)
+app.delete('/task', auth.checkIfInRole([ 0 ]), task.delete)
+
 app.get('/listUsers', auth.checkIfInRole([ 0, 1 ]), chat.listUsers(wsInstance))
 
 mongoose.connect(config.dbUrl).then(connection => {
@@ -96,6 +102,7 @@ mongoose.connect(config.dbUrl).then(connection => {
     // initialization of the models
     person.init(connection)
     project.init(connection)
+    task.init(connection)
 
     app.listen(config.port, () => {
         console.log('Backend listening on port', config.port)

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-
 const person = require('./person')
 
 const schema = new mongoose.Schema({
@@ -99,7 +98,7 @@ module.exports = {
         const _id = req.query._id
         let promises = [ 
             model.findOneAndDelete({ _id }),
-            person.getModel().updateMany({}, { $pull: { projects: _id } })
+            // person.getModel().updateMany({}, { $pull: { projects: _id } })
         ]
         Promise.all(promises)
         .then(results => {

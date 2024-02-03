@@ -36,6 +36,7 @@
         <v-btn variant="elevated" color="success" @click="modify" :disabled="!isProjectValid" v-if="id">Modify</v-btn>
         <v-btn variant="elevated" color="error" @click="remove" v-if="id">Remove</v-btn>
         <v-btn variant="elevated" color="warning" @click="cancel">Cancel</v-btn>
+        <v-btn variant="elevated" color="success" @click="openTask">Open task</v-btn>
       </v-card-actions>
     </v-card>
     <v-dialog v-model="confirmation" width="auto">
@@ -64,6 +65,7 @@ export default {
   mixins: [ common ],
   methods: {
     add() {
+      console.log(this.project)
       fetch('/project', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -111,6 +113,15 @@ export default {
       this.$refs.vmap.map.flyTo(this.center)
     }
   },
+
+  openTask() {
+    this.showTaskModal = true;
+  },
+
+  closeTask() {
+    this.showTaskModal = false;
+  },
+
   data() {
     return {
       isProjectValid: false,
